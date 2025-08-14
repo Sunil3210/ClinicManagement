@@ -12,8 +12,8 @@ namespace DAL
 {
     public interface IDepartmentDAL
     {
-        Task<int> Create(Department department);
-        Task<int> Update(Department department);
+        Task<int> CreateOrUpdate(Department department);
+        //Task<int> Update(Department department);
         Task<Department> GetById(int id);
         Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters = null);
     }
@@ -28,61 +28,9 @@ namespace DAL
         /// </summary>
         /// <param name="department"></param>
         /// <returns></returns>
-        public async Task<int> Create(Department department)
+        public async Task<int> CreateOrUpdate(Department department)
         {
             int newId = 0;
-            var parms = new SqlParameter[]
-                    {
-                        new SqlParameter(){
-                            ParameterName ="@Name",
-                            SqlDbType = SqlDbType.NVarChar,
-                            IsNullable=true,
-                            Value = department.Name,
-                            Direction = ParameterDirection.Input,
-                        },
-                        new SqlParameter(){
-                            ParameterName ="@Id",
-                            SqlDbType = SqlDbType.NVarChar,
-                            IsNullable=true,
-                            Value = department.Id>0?department.Id:null,
-                            Direction = ParameterDirection.Input,
-                        }
-                    };
-            var outPutParameter = new SqlParameter()
-            {
-                ParameterName = "@NewId",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output,
-            };
-
-            using (var connection = CreateConnection())
-            {
-                using (var command = connection.CreateCommand())
-                {
-                    connection.Open();
-                    command.CommandText = "sp_Department_CreateOrUpdate";
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddRange(parms);
-                    command.Parameters.Add(outPutParameter);
-                    command.Connection = connection;
-                    await command.ExecuteNonQueryAsync();
-                }
-            }
-            return newId;
-
-        }
-
-        #endregion
-
-        #region Update
-
-        /// <summary>
-        /// Update Department
-        /// </summary>
-        /// <param name="department"></param>
-        /// <returns></returns>
-        public async Task<int> Update(Department department)
-        {
             int retVal = -1;
             var parms = new SqlParameter[]
                     {
@@ -92,22 +40,21 @@ namespace DAL
                             IsNullable=true,
                             Value = department.Name,
                             Direction = ParameterDirection.Input,
-                        },
-                        new SqlParameter(){
-                            ParameterName ="@Id",
-                            SqlDbType = SqlDbType.NVarChar,
-                            IsNullable=true,
-                            Value = department.Id>0?department.Id:null,
-                            Direction = ParameterDirection.Input,
                         }
                     };
-
+            var outPutParameter = new SqlParameter()
+            {
+                ParameterName = "@NewId",
+                SqlDbType = SqlDbType.Int,
+                Direction = ParameterDirection.Output,
+            };
             var returnParameter = new SqlParameter()
             {
                 ParameterName = "@ReturnVal",
                 SqlDbType = SqlDbType.Int,
                 Direction = ParameterDirection.ReturnValue,
             };
+
             using (var connection = CreateConnection())
             {
                 using (var command = connection.CreateCommand())
@@ -116,16 +63,88 @@ namespace DAL
                     command.CommandText = "sp_Department_CreateOrUpdate";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parms);
+                    if (department.Id > 0)
+                    {
+                        command.Parameters.Add(new SqlParameter()
+                        {
+                            ParameterName = "@Id",
+                            SqlDbType = SqlDbType.Int,
+                            IsNullable = true,
+                            Value = department.Id,
+                            Direction = ParameterDirection.Input,
+                        });
+                    }
+                    command.Parameters.Add(outPutParameter);
                     command.Parameters.Add(returnParameter);
                     command.Connection = connection;
                     await command.ExecuteNonQueryAsync();
+                    retVal = (int)returnParameter.Value;
+                    if (retVal == 0 && department.Id==0)
+                    {
+                        newId = (int)outPutParameter.Value;
+                    }
                 }
             }
+
             return retVal;
 
         }
 
         #endregion
+
+        //#region Update
+
+        ///// <summary>
+        ///// Update Department
+        ///// </summary>
+        ///// <param name="department"></param>
+        ///// <returns></returns>
+        //public async Task<int> Update(Department department)
+        //{
+        //    int retVal = -1;
+        //    var parms = new SqlParameter[]
+        //            {
+        //                new SqlParameter(){
+        //                    ParameterName ="@Name",
+        //                    SqlDbType = SqlDbType.NVarChar,
+        //                    IsNullable=true,
+        //                    Value = department.Name,
+        //                    Direction = ParameterDirection.Input,
+        //                },
+        //                new SqlParameter(){
+        //                    ParameterName ="@Id",
+        //                    SqlDbType = SqlDbType.NVarChar,
+        //                    IsNullable=true,
+        //                    Value = department.Id>0?department.Id:null,
+        //                    Direction = ParameterDirection.Input,
+        //                }
+        //            };
+
+        //    var returnParameter = new SqlParameter()
+        //    {
+        //        ParameterName = "@ReturnVal",
+        //        SqlDbType = SqlDbType.Int,
+        //        Direction = ParameterDirection.ReturnValue,
+        //    };
+        //    using (var connection = CreateConnection())
+        //    {
+        //        using (var command = connection.CreateCommand())
+        //        {
+        //            connection.Open();
+        //            command.CommandText = "sp_Department_CreateOrUpdate";
+        //            command.CommandType = CommandType.StoredProcedure;
+        //            command.Parameters.AddRange(parms);
+        //            command.Parameters.Add(returnParameter);
+        //            command.Connection = connection;
+        //            await command.ExecuteNonQueryAsync();
+        //            retVal = (int)returnParameter.Value;
+        //        }
+        //    }
+        //    return retVal;
+
+        //}
+
+        //#endregion
 
         #region GetById
 

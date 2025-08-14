@@ -5,8 +5,7 @@ namespace BLL
 {
     public interface IDepartmentBLL
     {
-        Task<int> Create(Department department);
-        Task<int> Update(Department department);
+        Task<int> CreateOrUpdate(Department department);
         Task<Department> GetById(int id);
         Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters);
     }
@@ -19,29 +18,16 @@ namespace BLL
         }
 
 
-        #region Create
+        #region CreateOrUpdate
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="department"></param>
         /// <returns></returns>
-        public Task<int> Create(Department department)
+        public Task<int> CreateOrUpdate(Department department)
         {
-            return departmentDAL.Create(department);
-        }
-
-        #endregion
-
-        #region Update
-
-        /// <summary>
-        /// Update
-        /// </summary>
-        /// <param name="department"></param>
-        /// <returns></returns>
-        public Task<int> Update(Department department)
-        {
-            return departmentDAL.Update(department);
+            return departmentDAL.CreateOrUpdate(department);
         }
 
         #endregion
