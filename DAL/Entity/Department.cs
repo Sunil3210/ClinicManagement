@@ -15,6 +15,11 @@ namespace DAL.Entity
 
     public class DepartmentList
     {
+
+        public DepartmentList() 
+        {
+            this.Departments = new List<Department>();
+        }
         public List<Department> Departments { get; set; }
         public int TotalCount { get; set; }
     }

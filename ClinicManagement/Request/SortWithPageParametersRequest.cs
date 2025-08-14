@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DAL.Entity
+﻿namespace ClinicManagement.Request
 {
-    public class SortWithPageParameters
+    public class SortWithPageParametersRequest
     {
         public string? SortParameter { get; set; }
         public string? SortDirection { get; set; }

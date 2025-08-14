@@ -109,5 +109,39 @@ namespace ClinicManagement.Controllers
         }
 
         #endregion
+
+        #region GetList
+
+        /// <summary>
+        /// Read DepartmBy List With Pagination ,search and sorting
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetList")]
+        public async Task<BLLResponse> GetList([FromQuery]SortWithPageParametersRequest sortWithPageParameters =null)
+        {
+            BLLResponse bLLResponse = null;
+
+            try
+            {
+                var sortWithPageParm = mapper.Map<SortWithPageParametersRequest, SortWithPageParameters>(sortWithPageParameters);
+                var result = await departmentBLL.GetList(sortWithPageParm);
+                if (result.Departments.Count>0)
+                {
+                    bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
+                }
+                else
+                {
+                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Department not exist");
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return bLLResponse;
+        }
+
+        #endregion
     }
 }
