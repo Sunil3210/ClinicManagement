@@ -132,7 +132,7 @@ namespace ClinicManagement.Controllers
                 }
                 else
                 {
-                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Department not exist");
+                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Departments not exist");
                 }
             }
             catch (Exception ex)
