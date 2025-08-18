@@ -37,6 +37,12 @@ namespace ClinicManagement.Controllers
             BLLResponse bLLResponse = null;
 
             var department = mapper.Map<DepartmentSaveRequest, Department>(request);
+        
+            //var department = new Department()
+            //{
+            //    Id = request.Id,
+            //    Name = request.Name,
+            //};
             try
             {
                 var result = await departmentBLL.CreateOrUpdate(department);

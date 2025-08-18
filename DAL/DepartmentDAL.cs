@@ -230,7 +230,7 @@ namespace DAL
                         },
                         new SqlParameter(){
                             ParameterName ="@Search",
-                            SqlDbType = SqlDbType.Int,
+                            SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
                             Value = sortWithPageParameters.SearchString,
                             Direction = ParameterDirection.Input,
