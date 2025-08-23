@@ -92,60 +92,6 @@ namespace DAL
 
         #endregion
 
-        //#region Update
-
-        ///// <summary>
-        ///// Update Department
-        ///// </summary>
-        ///// <param name="department"></param>
-        ///// <returns></returns>
-        //public async Task<int> Update(Department department)
-        //{
-        //    int retVal = -1;
-        //    var parms = new SqlParameter[]
-        //            {
-        //                new SqlParameter(){
-        //                    ParameterName ="@Name",
-        //                    SqlDbType = SqlDbType.NVarChar,
-        //                    IsNullable=true,
-        //                    Value = department.Name,
-        //                    Direction = ParameterDirection.Input,
-        //                },
-        //                new SqlParameter(){
-        //                    ParameterName ="@Id",
-        //                    SqlDbType = SqlDbType.NVarChar,
-        //                    IsNullable=true,
-        //                    Value = department.Id>0?department.Id:null,
-        //                    Direction = ParameterDirection.Input,
-        //                }
-        //            };
-
-        //    var returnParameter = new SqlParameter()
-        //    {
-        //        ParameterName = "@ReturnVal",
-        //        SqlDbType = SqlDbType.Int,
-        //        Direction = ParameterDirection.ReturnValue,
-        //    };
-        //    using (var connection = CreateConnection())
-        //    {
-        //        using (var command = connection.CreateCommand())
-        //        {
-        //            connection.Open();
-        //            command.CommandText = "sp_Department_CreateOrUpdate";
-        //            command.CommandType = CommandType.StoredProcedure;
-        //            command.Parameters.AddRange(parms);
-        //            command.Parameters.Add(returnParameter);
-        //            command.Connection = connection;
-        //            await command.ExecuteNonQueryAsync();
-        //            retVal = (int)returnParameter.Value;
-        //        }
-        //    }
-        //    return retVal;
-
-        //}
-
-        //#endregion
-
         #region GetById
 
         /// <summary>
