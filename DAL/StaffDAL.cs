@@ -16,7 +16,7 @@ namespace DAL
         Task<Staff> GetById(int id);
         Task<StaffList> GetList(SortWithPageParameters sortWithPageParameters = null);
     }
-    public class StaffDAL : BaseDAL
+    public class StaffDAL : BaseDAL,IStaffDAL
     {
         public StaffDAL(IConfiguration configuration) : base(configuration) { }
 

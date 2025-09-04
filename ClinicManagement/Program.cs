@@ -13,9 +13,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //DAL
 builder.Services.AddScoped<IDepartmentDAL, DepartmentDAL>();
+builder.Services.AddScoped<IStaffDAL, StaffDAL>();
 
 //BLL
 builder.Services.AddScoped<IDepartmentBLL, DepartmentBLL>();
+builder.Services.AddScoped<IStaffBLL, StaffBLL>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
