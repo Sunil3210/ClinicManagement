@@ -15,8 +15,9 @@ namespace DAL
         Task<int> CreateOrUpdate(Staff staff);
         Task<Staff> GetById(int id);
         Task<StaffList> GetList(SortWithPageParameters sortWithPageParameters = null);
+        Task<Staff> Validate(string email, string password);
     }
-    public class StaffDAL : BaseDAL,IStaffDAL
+    public class StaffDAL : BaseDAL, IStaffDAL
     {
         public StaffDAL(IConfiguration configuration) : base(configuration) { }
 
@@ -244,6 +245,61 @@ namespace DAL
             }
 
             return staffList;
+        }
+
+        #endregion
+
+        #region GetById
+
+        /// <summary>
+        /// Get Department By Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Staff> Validate(string email, string password)
+        {
+            Staff staff = null;
+
+            using (var connection = CreateConnection())
+            {
+                using (var command = connection.CreateCommand())
+                {
+                    connection.Open();
+                    command.CommandText = "sp_Staff_Validate";
+                    var parms = new SqlParameter[]
+                    {
+                        new SqlParameter(){
+                            ParameterName ="@Email",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = email,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@Password",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = password,
+                            Direction = ParameterDirection.Input,
+                        }
+                    };
+                    command.Parameters.AddRange(parms);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Connection = connection;
+                    var dataReader = await command.ExecuteReaderAsync();
+                    while (dataReader.Read())
+                    {
+                        staff = new Staff()
+                        {
+                            Id = Convert.ToInt32(dataReader["Id"]),
+                            Name = dataReader["Name"].ToString(),
+                            Email = dataReader["email"].ToString(),
+                            Role = dataReader["Role"].ToString()
+                        };
+                    }
+                }
+            }
+            return staff;
         }
 
         #endregion

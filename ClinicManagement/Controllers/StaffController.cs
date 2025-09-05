@@ -3,6 +3,7 @@ using BLL;
 using ClinicManagement.Request;
 using ClinicManagement.Response;
 using DAL.Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -84,6 +85,7 @@ namespace ClinicManagement.Controllers
         /// Read DepartmBy Id
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [HttpGet]
         [Route("GetById")]
         public async Task<BLLResponse> GetById(int staffId)

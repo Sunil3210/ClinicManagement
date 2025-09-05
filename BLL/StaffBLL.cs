@@ -8,6 +8,7 @@ namespace BLL
         Task<int> CreateOrUpdate(Staff staff);
         Task<Staff> GetById(int id);
         Task<StaffList> GetList(SortWithPageParameters sortWithPageParameters = null);
+        Task<Staff> Validate(string email, string password);
     }
     public class StaffBLL : IStaffBLL
     {
@@ -60,5 +61,18 @@ namespace BLL
 
         #endregion
 
+        #region GetById
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Task<Staff> Validate(string email,string password)
+        {
+            return staffDAL.Validate(email,password);
+        }
+
+        #endregion
     }
 }
