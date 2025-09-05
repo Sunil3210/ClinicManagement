@@ -25,9 +25,9 @@ namespace BLL
         /// </summary>
         /// <param name="department"></param>
         /// <returns></returns>
-        public Task<int> CreateOrUpdate(Department department)
+        public async Task<int> CreateOrUpdate(Department department)
         {
-            return departmentDAL.CreateOrUpdate(department);
+            return await departmentDAL.CreateOrUpdate(department);
         }
 
         #endregion
@@ -39,9 +39,9 @@ namespace BLL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Task<Department> GetById(int id)
+        public async Task<Department> GetById(int id)
         {
-            return departmentDAL.GetById(id);
+            return await departmentDAL.GetById(id);
         }
 
         #endregion
@@ -53,9 +53,9 @@ namespace BLL
         /// </summary>
         /// <param name="sortWithPageParameters"></param>
         /// <returns></returns>
-        public Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters)
+        public async Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters)
         {
-            return departmentDAL.GetList(sortWithPageParameters);
+            return await departmentDAL.GetList(sortWithPageParameters);
         }
 
         #endregion
