@@ -41,6 +41,11 @@ ValidateLifetime = false,
 });
 
 builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("AdminOrManager", policy =>
+//        policy.RequireRole("Admin", "Manager")); //
+//});
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });

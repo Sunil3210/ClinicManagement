@@ -85,7 +85,9 @@ namespace ClinicManagement.Controllers
         /// Read DepartmBy Id
         /// </summary>
         /// <returns></returns>
-        [Authorize]
+        //[Authorize(Roles = "Nurse")]
+        //[Authorize(Roles = "Admin,Manager")]
+        //[Authorize(Policy = "AdminOrManager")]
         [HttpGet]
         [Route("GetById")]
         public async Task<BLLResponse> GetById(int staffId)
