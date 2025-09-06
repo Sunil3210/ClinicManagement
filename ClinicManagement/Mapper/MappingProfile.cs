@@ -11,6 +11,10 @@ namespace ClinicManagement.Mapper
             CreateMap<DepartmentSaveRequest, Department>();
             CreateMap<DoctorSaveRequest, Doctor>();
             CreateMap<SortWithPageParametersRequest, SortWithPageParameters>();
+
+
+            CreateMap<StaffSaveRequest, Staff>();
+
         }
     }
 }
