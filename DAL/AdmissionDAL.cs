@@ -5,39 +5,69 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DAL
 {
-    public interface IDepartmentDAL
+    public interface IAdmissionDAL
     {
-        Task<int> CreateOrUpdate(Department department);
-        Task<Department> GetById(int id);
-        Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters = null);
+        Task<int> CreateOrUpdate(Admission admission);
+        Task<Admission> GetById(int Id);
+        Task<AdmissionList> GetList(SortWithPageParameters sortWithPageParameters = null);
     }
-    public class DepartmentDAL : BaseDAL, IDepartmentDAL
+    public class AdmissionDAL : BaseDAL, IAdmissionDAL
     {
-        public DepartmentDAL(IConfiguration configuration) : base(configuration) { }
+        public AdmissionDAL(IConfiguration configuration) : base(configuration){}
 
-        #region Create
-
-        /// <summary>
-        /// Create Department
-        /// </summary>
-        /// <param name="department"></param>
-        /// <returns></returns>
-        public async Task<int> CreateOrUpdate(Department department)
+        #region CreateOrUpdate
+        public async Task<int> CreateOrUpdate(Admission admission)
         {
             int newId = 0;
             int retVal = -1;
             var parms = new SqlParameter[]
                     {
                         new SqlParameter(){
-                            ParameterName ="@Name",
-                            SqlDbType = SqlDbType.NVarChar,
+                            ParameterName ="@PatientId",
+                            SqlDbType = SqlDbType.Int,
                             IsNullable=true,
-                            Value = department.Name,
+                            Value = admission.PatientId,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@RoomId",
+                            SqlDbType = SqlDbType.Int,
+                            IsNullable=true,
+                            Value = admission.RoomId,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@DischargeDate",
+                            SqlDbType = SqlDbType.Date,
+                            IsNullable=true,
+                            Value = admission.DischargeDate,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@CreatedBy",
+                            SqlDbType = SqlDbType.Int,
+                            IsNullable=true,
+                            Value = admission.CreatedBy,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@ModifiedBy",
+                            SqlDbType = SqlDbType.Int,
+                            IsNullable=true,
+                            Value = admission.ModifiedBy,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@Active",
+                            SqlDbType = SqlDbType.Bit,
+                            IsNullable=true,
+                            Value = admission.Active,
                             Direction = ParameterDirection.Input,
                         }
                     };
@@ -59,17 +89,17 @@ namespace DAL
                 using (var command = connection.CreateCommand())
                 {
                     connection.Open();
-                    command.CommandText = "sp_Department_CreateOrUpdate";
+                    command.CommandText = "sp_Admission_CreateOrUpdate";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parms);
-                    if (department.Id > 0)
+                    if (admission.Id > 0)
                     {
                         command.Parameters.Add(new SqlParameter()
                         {
                             ParameterName = "@Id",
                             SqlDbType = SqlDbType.Int,
                             IsNullable = true,
-                            Value = department.Id,
+                            Value = admission.Id,
                             Direction = ParameterDirection.Input,
                         });
                     }
@@ -78,7 +108,7 @@ namespace DAL
                     command.Connection = connection;
                     await command.ExecuteNonQueryAsync();
                     retVal = (int)returnParameter.Value;
-                    if (retVal == 0 && department.Id==0)
+                    if (retVal == 0 && admission.Id == 0)
                     {
                         newId = (int)outPutParameter.Value;
                     }
@@ -88,30 +118,22 @@ namespace DAL
             return retVal;
 
         }
-
         #endregion
 
         #region GetById
-
-        /// <summary>
-        /// Get Department By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<Department> GetById(int id)
+        public async Task<Admission> GetById(int id)
         {
-            Department department = null;
-
+            Admission admission = null;
             using (var connection = CreateConnection())
             {
                 using (var command = connection.CreateCommand())
                 {
                     connection.Open();
-                    command.CommandText = "sp_Department_GetById";
+                    command.CommandText = "sp_Admission_GetById";
                     command.Parameters.Add(new SqlParameter()
                     {
                         ParameterName = "@Id",
-                        SqlDbType = SqlDbType.NVarChar,
+                        SqlDbType = SqlDbType.Int,
                         Direction = ParameterDirection.Input,
                         Value = id,
                         IsNullable = false
@@ -121,24 +143,31 @@ namespace DAL
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
                     {
-                        department = new Department()
+                        admission = new Admission()
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
-                            Name = dataReader["Name"].ToString(),
+                            PatientId = Convert.ToInt32(dataReader["PatientId"]),
+                            RoomId = Convert.ToInt32(dataReader["RoomId"]),
+                            AdmissionDate = Convert.ToDateTime(dataReader["AdmissionDate"]),
+                            DischargeDate = dataReader["DischargeDate"] == DBNull.Value ? null : Convert.ToDateTime(dataReader["DischargeDate"]),
+                            CreatedBy = Convert.ToInt32(dataReader["CreatedBy"]),
+                            CreatedDate = Convert.ToDateTime(dataReader["CreatedDate"]),
+                            ModifiedBy = dataReader["ModifiedBy"] == DBNull.Value ? null : Convert.ToInt32(dataReader["ModifiedBy"]),
+                            ModifiedDate = dataReader["ModifiedDate"] == DBNull.Value ? null : Convert.ToDateTime(dataReader["ModifiedDate"]),
+                            Active = Convert.ToBoolean(dataReader["Active"]),
                         };
                     }
                 }
             }
-            return department;
-        }
+            return admission;
 
+        }
         #endregion
 
         #region GetList
-
-        public async Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters = null)
+        public async Task<AdmissionList> GetList(SortWithPageParameters sortWithPageParameters)
         {
-            DepartmentList departmentList = new DepartmentList();
+            AdmissionList admissionList = new AdmissionList();
             if (sortWithPageParameters == null)
             {
                 sortWithPageParameters = new SortWithPageParameters();
@@ -187,33 +216,39 @@ namespace DAL
                 using (var command = dbConnection.CreateCommand())
                 {
                     dbConnection.Open();
-                    command.CommandText = "sp_Department_GetList";
+                    command.CommandText = "sp_Admission_GetList";
                     command.Parameters.AddRange(parms);
                     command.CommandType = CommandType.StoredProcedure;
                     command.Connection = dbConnection;
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
                     {
-                        Department department = new Department()
+                        Admission admission = new Admission()
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
+                            PatientId = Convert.ToInt32(dataReader["PatientId"]),
                             Name = dataReader["Name"].ToString(),
+                            RoomNumber = dataReader["RoomNumber"].ToString(),
+                            RoomType = dataReader["RoomType"].ToString(),
+                            Phone = dataReader["Phone"] == DBNull.Value ? null : dataReader["Phone"].ToString(),
+                            Gender = Convert.ToChar(dataReader["Gender"]),
+                            Age = Convert.ToInt32(dataReader["Age"])
                         };
-                        departmentList.Departments.Add(department);
+                        admissionList.admissions.Add(admission);
                     }
                     if (dataReader.NextResult())
                     {
                         while (dataReader.Read())
                         {
-                            departmentList.TotalCount = Convert.ToInt32(dataReader["TotalCount"]);
+                            admissionList.TotalCount = Convert.ToInt32(dataReader["TotalCount"]);
                         }
                     }
                 }
             }
 
-            return departmentList;
+            return admissionList;
         }
-
         #endregion
+
     }
 }

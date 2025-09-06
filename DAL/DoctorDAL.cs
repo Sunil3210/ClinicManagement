@@ -10,24 +10,18 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    public interface IDepartmentDAL
+    public interface IDoctorDAL
     {
-        Task<int> CreateOrUpdate(Department department);
-        Task<Department> GetById(int id);
-        Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters = null);
+        Task<int> CreateOrUpdate(Doctor doctor);
+        Task<Doctor> GetById(int id);
+        Task<DoctorList> GetList(SortWithPageParameters sortWithPageParameters = null);
     }
-    public class DepartmentDAL : BaseDAL, IDepartmentDAL
+    public class DoctorDAL : BaseDAL, IDoctorDAL
     {
-        public DepartmentDAL(IConfiguration configuration) : base(configuration) { }
+        public DoctorDAL(IConfiguration configuration) : base(configuration) { }
 
-        #region Create
-
-        /// <summary>
-        /// Create Department
-        /// </summary>
-        /// <param name="department"></param>
-        /// <returns></returns>
-        public async Task<int> CreateOrUpdate(Department department)
+        #region CreateOrUpdate
+        public async Task<int> CreateOrUpdate(Doctor doctor)
         {
             int newId = 0;
             int retVal = -1;
@@ -37,7 +31,56 @@ namespace DAL
                             ParameterName ="@Name",
                             SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
-                            Value = department.Name,
+                            Value = doctor.Name,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@Specialization",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = doctor.Specialization,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@DepartmentId",
+                            SqlDbType = SqlDbType.Int,
+                            IsNullable=true,
+                            Value = doctor.DepartmentId,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@Email",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = doctor.Email,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@Phone",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = doctor.Phone,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@CreatedBy",
+                            SqlDbType = SqlDbType.Int,
+                            IsNullable=true,
+                            Value = doctor.CreatedBy,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@ModifiedBy",
+                            SqlDbType = SqlDbType.Int,
+                            IsNullable=true,
+                            Value = doctor.ModifiedBy,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@Active",
+                            SqlDbType = SqlDbType.Bit,
+                            IsNullable=true,
+                            Value = doctor.Active,
                             Direction = ParameterDirection.Input,
                         }
                     };
@@ -53,23 +96,22 @@ namespace DAL
                 SqlDbType = SqlDbType.Int,
                 Direction = ParameterDirection.ReturnValue,
             };
-
             using (var connection = CreateConnection())
             {
                 using (var command = connection.CreateCommand())
                 {
                     connection.Open();
-                    command.CommandText = "sp_Department_CreateOrUpdate";
+                    command.CommandText = "sp_Doctor_CreateOrUpdate";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parms);
-                    if (department.Id > 0)
+                    if (doctor.Id > 0)
                     {
                         command.Parameters.Add(new SqlParameter()
                         {
                             ParameterName = "@Id",
                             SqlDbType = SqlDbType.Int,
                             IsNullable = true,
-                            Value = department.Id,
+                            Value = doctor.Id,
                             Direction = ParameterDirection.Input,
                         });
                     }
@@ -78,40 +120,32 @@ namespace DAL
                     command.Connection = connection;
                     await command.ExecuteNonQueryAsync();
                     retVal = (int)returnParameter.Value;
-                    if (retVal == 0 && department.Id==0)
+                    if (retVal == 0 && doctor.Id == 0)
                     {
                         newId = (int)outPutParameter.Value;
                     }
                 }
             }
-
             return retVal;
-
         }
-
         #endregion
 
         #region GetById
-
-        /// <summary>
-        /// Get Department By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<Department> GetById(int id)
+        public async Task<Doctor> GetById(int id)
         {
-            Department department = null;
+            Doctor doctor = null;
+            
 
             using (var connection = CreateConnection())
             {
                 using (var command = connection.CreateCommand())
                 {
                     connection.Open();
-                    command.CommandText = "sp_Department_GetById";
+                    command.CommandText = "sp_Doctor_GetById";
                     command.Parameters.Add(new SqlParameter()
                     {
                         ParameterName = "@Id",
-                        SqlDbType = SqlDbType.NVarChar,
+                        SqlDbType = SqlDbType.Int,
                         Direction = ParameterDirection.Input,
                         Value = id,
                         IsNullable = false
@@ -121,24 +155,32 @@ namespace DAL
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
                     {
-                        department = new Department()
+                        doctor = new Doctor()
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             Name = dataReader["Name"].ToString(),
+                            Specialization = dataReader["Specialization"].ToString(),
+                            DepartmentId = Convert.ToInt32(dataReader["DepartmentId"]),
+                            Email = dataReader["Email"].ToString(),
+                            Phone = dataReader["Phone"].ToString(),
+                            CreatedBy = Convert.ToInt32(dataReader["CreatedBy"]),
+                            CreatedDate = Convert.ToDateTime(dataReader["CreatedDate"]),
+                            ModifiedBy = dataReader["ModifiedBy"] == DBNull.Value ? null : Convert.ToInt32(dataReader["ModifiedBy"]),
+                            ModifiedDate = dataReader["ModifiedDate"] == DBNull.Value ? null : Convert.ToDateTime(dataReader["ModifiedDate"]),
+                            Active = Convert.ToBoolean(dataReader["Active"]),
                         };
                     }
                 }
             }
-            return department;
+            return doctor;
+            
         }
-
         #endregion
 
         #region GetList
-
-        public async Task<DepartmentList> GetList(SortWithPageParameters sortWithPageParameters = null)
+        public async Task<DoctorList> GetList(SortWithPageParameters sortWithPageParameters = null)
         {
-            DepartmentList departmentList = new DepartmentList();
+            DoctorList doctorList = new DoctorList();
             if (sortWithPageParameters == null)
             {
                 sortWithPageParameters = new SortWithPageParameters();
@@ -187,33 +229,36 @@ namespace DAL
                 using (var command = dbConnection.CreateCommand())
                 {
                     dbConnection.Open();
-                    command.CommandText = "sp_Department_GetList";
+                    command.CommandText = "sp_Doctor_GetList";
                     command.Parameters.AddRange(parms);
                     command.CommandType = CommandType.StoredProcedure;
                     command.Connection = dbConnection;
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
                     {
-                        Department department = new Department()
+                        Doctor doctor = new Doctor()
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             Name = dataReader["Name"].ToString(),
+                            Specialization = dataReader["Specialization"].ToString(),
+                            Email = dataReader["Email"].ToString(),
+                            Phone = dataReader["Phone"].ToString(),
+                            DepartmentName = dataReader["DepartmentName"].ToString(),
                         };
-                        departmentList.Departments.Add(department);
+                        doctorList.Doctors.Add(doctor);
                     }
                     if (dataReader.NextResult())
                     {
                         while (dataReader.Read())
                         {
-                            departmentList.TotalCount = Convert.ToInt32(dataReader["TotalCount"]);
+                            doctorList.TotalCount = Convert.ToInt32(dataReader["TotalCount"]);
                         }
                     }
                 }
             }
 
-            return departmentList;
+            return doctorList;
         }
-
         #endregion
     }
 }

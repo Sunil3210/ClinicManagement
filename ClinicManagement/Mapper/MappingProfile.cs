@@ -7,7 +7,9 @@ namespace ClinicManagement.Mapper
     {
         public MappingProfile()
         {
+            CreateMap<AdmissionSaveRequest, Admission>();
             CreateMap<DepartmentSaveRequest, Department>();
+            CreateMap<DoctorSaveRequest, Doctor>();
             CreateMap<SortWithPageParametersRequest, SortWithPageParameters>();
         }
     }

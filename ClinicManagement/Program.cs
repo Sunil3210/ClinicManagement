@@ -12,10 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //DAL
+builder.Services.AddScoped<IDoctorDAL, DoctorDAL>();
 builder.Services.AddScoped<IDepartmentDAL, DepartmentDAL>();
+builder.Services.AddScoped<IAdmissionDAL, AdmissionDAL>();
 
 //BLL
 builder.Services.AddScoped<IDepartmentBLL, DepartmentBLL>();
+builder.Services.AddScoped<IDoctorBLL, DoctorBLL>();
+builder.Services.AddScoped<IAdmissionBLL, AdmissionBLL>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
