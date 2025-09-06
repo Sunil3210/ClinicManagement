@@ -19,10 +19,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<JWTSetting>(builder.Configuration.GetSection("JwtTokenFields"));
 //DAL
 builder.Services.AddScoped<IDepartmentDAL, DepartmentDAL>();
+builder.Services.AddScoped<IDoctorDAL, DoctorDAL>();
+builder.Services.AddScoped<IAdmissionDAL, AdmissionDAL>();
 builder.Services.AddScoped<IStaffDAL, StaffDAL>();
 
 //BLL
 builder.Services.AddScoped<IDepartmentBLL, DepartmentBLL>();
+builder.Services.AddScoped<IAdmissionBLL, AdmissionBLL>();
+builder.Services.AddScoped<IDoctorBLL, DoctorBLL>();
 builder.Services.AddScoped<IStaffBLL, StaffBLL>();
 builder.Services.AddScoped<ITokenBLL, TokenBLL>();
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtTokenFields:AccessTokenKey"]);
