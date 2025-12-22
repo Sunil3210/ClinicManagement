@@ -16,7 +16,7 @@ namespace BLL
 
         public StaffBLL(IStaffDAL staffDAL)
         {
-            this.staffDAL = staffDAL;
+            this.staffDAL =  staffDAL;
         }
 
         #region CreateOrUpdate
@@ -26,9 +26,9 @@ namespace BLL
         /// </summary>
         /// <param name="staff"></param>
         /// <returns></returns>
-        public Task<int> CreateOrUpdate(Staff staff)
+        public async Task<int> CreateOrUpdate(Staff staff)
         {
-            return staffDAL.CreateOrUpdate(staff);
+            return await staffDAL.CreateOrUpdate(staff);
         }
 
         #endregion
@@ -40,9 +40,9 @@ namespace BLL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Task<Staff> GetById(int id)
+        public async Task<Staff> GetById(int id)
         {
-            return staffDAL.GetById(id);
+            return await staffDAL.GetById(id);
         }
 
         #endregion
@@ -54,9 +54,9 @@ namespace BLL
         /// </summary>
         /// <param name="sortWithPageParameters"></param>
         /// <returns></returns>
-        public Task<StaffList> GetList(SortWithPageParameters sortWithPageParameters)
+        public async Task<StaffList> GetList(SortWithPageParameters sortWithPageParameters)
         {
-            return staffDAL.GetList(sortWithPageParameters);
+            return await staffDAL.GetList(sortWithPageParameters);
         }
 
         #endregion
@@ -68,9 +68,9 @@ namespace BLL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Task<Staff> Validate(string email,string password)
+        public async Task<Staff> Validate(string email,string password)
         {
-            return staffDAL.Validate(email,password);
+            return await staffDAL.Validate(email,password);
         }
 
         #endregion

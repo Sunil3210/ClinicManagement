@@ -1,5 +1,6 @@
 using BLL;
 using BLL.Infrastructure;
+using ClinicManagement.Extension;
 using ClinicManagement.Mapper;
 using DAL;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,8 @@ builder.Services.AddScoped<IAdmissionBLL, AdmissionBLL>();
 builder.Services.AddScoped<IDoctorBLL, DoctorBLL>();
 builder.Services.AddScoped<IStaffBLL, StaffBLL>();
 builder.Services.AddScoped<ITokenBLL, TokenBLL>();
+builder.Services.AddScoped<IUserClaimService, UserClaimService>();
+builder.Services.AddHttpContextAccessor();
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtTokenFields:AccessTokenKey"]);
 builder.Services.AddAuthentication("Bearer")
 .AddJwtBearer("Bearer", options =>
@@ -42,6 +45,17 @@ ValidateIssuerSigningKey = true,
 IssuerSigningKey = new SymmetricSecurityKey(key),
 ValidateLifetime = false,
 };
+});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
 
 builder.Services.AddAuthorization();
@@ -89,7 +103,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowAngular");
 app.UseAuthorization();
 
 app.MapControllers();

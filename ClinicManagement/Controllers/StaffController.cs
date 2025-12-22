@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL;
+using ClinicManagement.Extension;
 using ClinicManagement.Request;
 using ClinicManagement.Response;
 using DAL.Entity;
@@ -16,11 +17,13 @@ namespace ClinicManagement.Controllers
     {
         public readonly IStaffBLL staffBLL;
         public readonly IMapper mapper;
+        public readonly IUserClaimService userClaimService;
 
-        public StaffController(IStaffBLL staffBLL, IMapper mapper)
+        public StaffController(IStaffBLL staffBLL, IMapper mapper,IUserClaimService userClaimService)
         {
             this.staffBLL = staffBLL;
             this.mapper = mapper;
+            this.userClaimService = userClaimService;
         }
 
         #region CreateOrUpdate
@@ -38,7 +41,7 @@ namespace ClinicManagement.Controllers
             BLLResponse bLLResponse = null;
 
             var staff = mapper.Map<StaffSaveRequest, Staff>(request);
-            staff.CreatedBy = 1;//loggedInUser
+            staff.CreatedBy =int.Parse(userClaimService.GetUserId());//loggedInUser
             try
             {
                 var result = await staffBLL.CreateOrUpdate(staff);
@@ -122,6 +125,7 @@ namespace ClinicManagement.Controllers
         /// </summary>
         /// <returns></returns>
 
+        [Authorize]
         [HttpGet]
         [Route("GetList")]
         public async Task<BLLResponse> GetList([FromQuery] SortWithPageParametersRequest sortWithPageParameters = null)
