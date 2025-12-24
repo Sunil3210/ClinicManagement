@@ -23,6 +23,7 @@ builder.Services.AddScoped<IDepartmentDAL, DepartmentDAL>();
 builder.Services.AddScoped<IDoctorDAL, DoctorDAL>();
 builder.Services.AddScoped<IAdmissionDAL, AdmissionDAL>();
 builder.Services.AddScoped<IStaffDAL, StaffDAL>();
+builder.Services.AddScoped<IProfileDAL, ProfileDAL>();
 
 //BLL
 builder.Services.AddScoped<IDepartmentBLL, DepartmentBLL>();
@@ -30,6 +31,7 @@ builder.Services.AddScoped<IAdmissionBLL, AdmissionBLL>();
 builder.Services.AddScoped<IDoctorBLL, DoctorBLL>();
 builder.Services.AddScoped<IStaffBLL, StaffBLL>();
 builder.Services.AddScoped<ITokenBLL, TokenBLL>();
+builder.Services.AddScoped<IProfileBLL, ProfileBLL>();
 builder.Services.AddScoped<IUserClaimService, UserClaimService>();
 builder.Services.AddHttpContextAccessor();
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtTokenFields:AccessTokenKey"]);
@@ -94,7 +96,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 var app = builder.Build();
-
+app.UseStaticFiles();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
