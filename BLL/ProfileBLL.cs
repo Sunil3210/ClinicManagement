@@ -11,6 +11,7 @@ namespace BLL
     public interface IProfileBLL
     {
         Task<int> UploadImage(string imagePath, int loggedInUserId);
+        Task<int> ChangePassword(string oldPassword, string newPassword, int loggedInUserId);
     }
     public class ProfileBLL : IProfileBLL
     {
@@ -24,6 +25,11 @@ namespace BLL
         public async Task<int> UploadImage(string fileName, int loggedInUserId)
         {
             return await profileDAL.UploadImage(fileName, loggedInUserId);
+        }
+        
+        public async Task<int> ChangePassword(string oldPassword, string newPassword, int loggedInUserId)
+        {
+            return await profileDAL.ChangePassword(oldPassword, newPassword, loggedInUserId);
         }
     }
 }

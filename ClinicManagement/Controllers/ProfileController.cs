@@ -1,5 +1,6 @@
 ﻿using BLL;
 using ClinicManagement.Extension;
+using ClinicManagement.Request;
 using ClinicManagement.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -76,6 +77,38 @@ namespace ClinicManagement.Controllers
                 FileName = fileName,
                 ImageUrl = imageUrl
             }, HttpStatusCode.OK, "Image Uploaded Successfully");
+            return bllResponse;
+        }
+
+        #endregion
+
+        #region ChangePassword
+
+        /// <summary>
+        /// Upload Profile Image
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+
+        [Route("changePassword")]
+        [HttpPut]
+        public async Task<BLLResponse> ChangePassword(ChangePasswordRequest changePasswordRequest)
+        {
+            BLLResponse bllResponse = null;
+           
+            var response = await profileBLL.ChangePassword(changePasswordRequest.OldPassword, changePasswordRequest.NewPassword, int.Parse(userClaimService.GetUserId()));
+            if (response == 0)
+            {
+                bllResponse = CreateSuccessResponse(response, HttpStatusCode.OK, "Password Updated Successfully");
+            }
+            else if(response == 1)
+            {
+                bllResponse = CreateFailResponse(response, HttpStatusCode.Unauthorized, "Incorrect Password");
+            }
+            else
+            {
+                bllResponse = CreateFailResponse(response, HttpStatusCode.InternalServerError, "An error occurred while changing the password");
+            }
             return bllResponse;
         }
 
