@@ -1,6 +1,7 @@
 using BLL;
 using BLL.Infrastructure;
 using ClinicManagement.Extension;
+using ClinicManagement.Filters;
 using ClinicManagement.Mapper;
 using DAL;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
