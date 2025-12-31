@@ -1,5 +1,6 @@
 ﻿using BLL;
 using BLL.Infrastructure;
+using ClinicManagement.Filters;
 using ClinicManagement.Request;
 using ClinicManagement.Response;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,7 @@ namespace ClinicManagement.Controllers
         /// </summary>
         /// <param name="authRequest"></param>
         /// <returns></returns>
+        [LogActionAttribute]
         [Route("Login")]
         [HttpPost]
         public async Task<BLLResponse> Login(AuthRequest authRequest)
