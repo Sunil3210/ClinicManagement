@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using BLL;
+using ClinicManagement.Filters;
 using ClinicManagement.Request;
 using ClinicManagement.Response;
 using DAL.Entity;
@@ -29,7 +30,7 @@ namespace ClinicManagement.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-
+        [AdminOnlyAttribute]
         [Route("CreateOrUpdate")]
         [HttpPost]
         public async Task<BLLResponse> CreateOrUpdate(DepartmentSaveRequest request)
@@ -117,14 +118,15 @@ namespace ClinicManagement.Controllers
         /// Read DepartmBy List With Pagination ,search and sorting
         /// </summary>
         /// <returns></returns>
+        /// 
         [HttpGet]
         [Route("GetList")]
         public async Task<BLLResponse> GetList([FromQuery]SortWithPageParametersRequest sortWithPageParameters =null)
         {
             BLLResponse bLLResponse = null;
 
-            try
-            {
+            //try
+            //{
                 var sortWithPageParm = mapper.Map<SortWithPageParametersRequest, SortWithPageParameters>(sortWithPageParameters);
                 var result = await departmentBLL.GetList(sortWithPageParm);
                 if (result.Departments.Count>0)
@@ -135,11 +137,11 @@ namespace ClinicManagement.Controllers
                 {
                     bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Departments not exist");
                 }
-            }
-            catch (Exception ex)
-            {
+            //}
+            //catch (Exception ex)
+            //{
 
-            }
+            //}
             return bLLResponse;
         }
 
