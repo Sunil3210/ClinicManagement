@@ -61,6 +61,12 @@ namespace DAL
                             IsNullable=true,
                             Value = staff.Role,
                             Direction = ParameterDirection.Input,
+                        },new SqlParameter(){
+                            ParameterName ="@Phone",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = staff.Phone,
+                            Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
                             ParameterName ="@LoggedInUserId",
@@ -155,7 +161,8 @@ namespace DAL
                             Id = Convert.ToInt32(dataReader["Id"]),
                             Name = dataReader["Name"].ToString(),
                             Email = dataReader["email"].ToString(),
-                            Role = dataReader["Role"].ToString()
+                            Role = dataReader["Role"].ToString(),
+                            Phone = dataReader["Phone"].ToString()
                         };
                     }
                 }

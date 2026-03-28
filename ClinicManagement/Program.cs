@@ -14,11 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-//builder.Services.AddControllers();
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<GlobalExceptionFilter>();
-});
+builder.Services.AddControllers();
+//builder.Services.AddControllers(options =>
+//{
+//    options.Filters.Add<GlobalExceptionFilter>();
+//});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -29,6 +29,7 @@ builder.Services.AddScoped<IDoctorDAL, DoctorDAL>();
 builder.Services.AddScoped<IAdmissionDAL, AdmissionDAL>();
 builder.Services.AddScoped<IStaffDAL, StaffDAL>();
 builder.Services.AddScoped<IProfileDAL, ProfileDAL>();
+builder.Services.AddScoped<ILookupDAL, LookupDAL>();
 
 //BLL
 builder.Services.AddScoped<IDepartmentBLL, DepartmentBLL>();
@@ -38,6 +39,7 @@ builder.Services.AddScoped<IStaffBLL, StaffBLL>();
 builder.Services.AddScoped<ITokenBLL, TokenBLL>();
 builder.Services.AddScoped<IProfileBLL, ProfileBLL>();
 builder.Services.AddScoped<IUserClaimService, UserClaimService>();
+builder.Services.AddScoped<ILookupBLL,LookupBLL>();
 builder.Services.AddHttpContextAccessor();
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtTokenFields:AccessTokenKey"]);
 builder.Services.AddAuthentication("Bearer")
@@ -50,7 +52,8 @@ ValidIssuer = builder.Configuration["JwtTokenFields:Issuer"],
 ValidateAudience = false,
 ValidateIssuerSigningKey = true,
 IssuerSigningKey = new SymmetricSecurityKey(key),
-ValidateLifetime = false,
+ValidateLifetime = true,
+ClockSkew = TimeSpan.Zero
 };
 });
 builder.Services.AddCors(options =>
@@ -102,6 +105,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 var app = builder.Build();
 app.UseStaticFiles();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -111,8 +115,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAngular");
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

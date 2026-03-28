@@ -32,7 +32,7 @@ namespace ClinicManagement.Controllers
 
         [Route("CreateOrUpdate")]
         [HttpPost]
-        public async Task<BLLResponse> CreateOrUpdate([FromBody]AdmissionSaveRequest request)
+        public async Task<BLLResponse> CreateOrUpdate(AdmissionSaveRequest request)
         {
             BLLResponse bLLResponse = null;
 

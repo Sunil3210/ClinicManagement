@@ -42,6 +42,7 @@ namespace ClinicManagement.Controllers
 
             var staff = mapper.Map<StaffSaveRequest, Staff>(request);
             staff.CreatedBy =int.Parse(userClaimService.GetUserId());//loggedInUser
+            staff.Password = "Test@123";
             try
             {
                 var result = await staffBLL.CreateOrUpdate(staff);
@@ -53,7 +54,7 @@ namespace ClinicManagement.Controllers
                     }
                     else if (result == 1)
                     {
-                        bLLResponse = CreateFailResponse(null, HttpStatusCode.InternalServerError, "Staff Already Exists");
+                        bLLResponse = CreateFailResponse(null, HttpStatusCode.InternalServerError, "Staff Already Exists.");
                     }
                 }
                 else if (request.Id > 0)
@@ -100,9 +101,10 @@ namespace ClinicManagement.Controllers
             try
             {
                 var result = await staffBLL.GetById(staffId);
-                if (result != null)
+                var response=mapper.Map<Staff,StaffResponse>(result);
+                if (response != null)
                 {
-                    bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
+                    bLLResponse = CreateSuccessResponse(response, HttpStatusCode.OK);
                 }
                 else
                 {

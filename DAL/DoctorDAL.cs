@@ -21,6 +21,12 @@ namespace DAL
         public DoctorDAL(IConfiguration configuration) : base(configuration) { }
 
         #region CreateOrUpdate
+
+        /// <summary>
+        /// Create or update the doctor
+        /// </summary>
+        /// <param name="doctor"></param>
+        /// <returns></returns>
         public async Task<int> CreateOrUpdate(Doctor doctor)
         {
             int newId = 0;
@@ -34,13 +40,13 @@ namespace DAL
                             Value = doctor.Name,
                             Direction = ParameterDirection.Input,
                         },
-                        new SqlParameter(){
-                            ParameterName ="@Specialization",
-                            SqlDbType = SqlDbType.NVarChar,
-                            IsNullable=true,
-                            Value = doctor.Specialization,
-                            Direction = ParameterDirection.Input,
-                        },
+                        //new SqlParameter(){
+                        //    ParameterName ="@Specialization",
+                        //    SqlDbType = SqlDbType.NVarChar,
+                        //    IsNullable=true,
+                        //    Value = doctor.Specialization,
+                        //    Direction = ParameterDirection.Input,
+                        //},
                         new SqlParameter(){
                             ParameterName ="@DepartmentId",
                             SqlDbType = SqlDbType.Int,
@@ -63,24 +69,10 @@ namespace DAL
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
-                            ParameterName ="@CreatedBy",
+                            ParameterName ="@LoggedInUser",
                             SqlDbType = SqlDbType.Int,
                             IsNullable=true,
                             Value = doctor.CreatedBy,
-                            Direction = ParameterDirection.Input,
-                        },
-                        new SqlParameter(){
-                            ParameterName ="@ModifiedBy",
-                            SqlDbType = SqlDbType.Int,
-                            IsNullable=true,
-                            Value = doctor.ModifiedBy,
-                            Direction = ParameterDirection.Input,
-                        },
-                        new SqlParameter(){
-                            ParameterName ="@Active",
-                            SqlDbType = SqlDbType.Bit,
-                            IsNullable=true,
-                            Value = doctor.Active,
                             Direction = ParameterDirection.Input,
                         }
                     };
@@ -128,6 +120,7 @@ namespace DAL
             }
             return retVal;
         }
+
         #endregion
 
         #region GetById
@@ -159,15 +152,11 @@ namespace DAL
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             Name = dataReader["Name"].ToString(),
-                            Specialization = dataReader["Specialization"].ToString(),
+                            //Specialization = dataReader["Specialization"].ToString(),
                             DepartmentId = Convert.ToInt32(dataReader["DepartmentId"]),
+                            DepartmentName = dataReader["DepartmentName"].ToString(),
                             Email = dataReader["Email"].ToString(),
                             Phone = dataReader["Phone"].ToString(),
-                            CreatedBy = Convert.ToInt32(dataReader["CreatedBy"]),
-                            CreatedDate = Convert.ToDateTime(dataReader["CreatedDate"]),
-                            ModifiedBy = dataReader["ModifiedBy"] == DBNull.Value ? null : Convert.ToInt32(dataReader["ModifiedBy"]),
-                            ModifiedDate = dataReader["ModifiedDate"] == DBNull.Value ? null : Convert.ToDateTime(dataReader["ModifiedDate"]),
-                            Active = Convert.ToBoolean(dataReader["Active"]),
                         };
                     }
                 }
@@ -240,10 +229,11 @@ namespace DAL
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             Name = dataReader["Name"].ToString(),
-                            Specialization = dataReader["Specialization"].ToString(),
+                            //Specialization = dataReader["Specialization"].ToString(),
                             Email = dataReader["Email"].ToString(),
                             Phone = dataReader["Phone"].ToString(),
                             DepartmentName = dataReader["DepartmentName"].ToString(),
+                            DepartmentId =Convert.ToInt32(dataReader["DepartmentId"]),
                         };
                         doctorList.Doctors.Add(doctor);
                     }

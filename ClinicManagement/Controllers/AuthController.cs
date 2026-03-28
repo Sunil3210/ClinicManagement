@@ -31,7 +31,7 @@ namespace ClinicManagement.Controllers
         /// </summary>
         /// <param name="authRequest"></param>
         /// <returns></returns>
-        [LogActionAttribute]
+        //[LogActionAttribute]
         [Route("Login")]
         [HttpPost]
         public async Task<BLLResponse> Login(AuthRequest authRequest)

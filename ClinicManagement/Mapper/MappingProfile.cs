@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClinicManagement.Request;
+using ClinicManagement.Response;
 using DAL.Entity;
 namespace ClinicManagement.Mapper
 {
@@ -11,9 +12,9 @@ namespace ClinicManagement.Mapper
             CreateMap<DepartmentSaveRequest, Department>();
             CreateMap<DoctorSaveRequest, Doctor>();
             CreateMap<SortWithPageParametersRequest, SortWithPageParameters>();
-
-
             CreateMap<StaffSaveRequest, Staff>();
+            CreateMap<Staff, StaffResponse>();
+            CreateMap<Doctor, DoctorResponse>();
 
         }
     }

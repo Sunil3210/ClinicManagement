@@ -93,9 +93,10 @@ namespace ClinicManagement.Controllers
             try
             {
                 var result = await doctorBLL.GetById(doctorId);
-                if (result != null)
+                var doctor=mapper.Map<Doctor,DoctorResponse>(result);
+                if (doctor != null)
                 {
-                    bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
+                    bLLResponse = CreateSuccessResponse(doctor, HttpStatusCode.OK);
                 }
                 else
                 {

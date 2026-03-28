@@ -120,6 +120,7 @@ namespace DAL
                     command.Connection = connection;
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
+
                     {
                         department = new Department()
                         {

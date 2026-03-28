@@ -30,7 +30,7 @@ namespace ClinicManagement.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [AdminOnlyAttribute]
+        //[AdminOnlyAttribute]
         [Route("CreateOrUpdate")]
         [HttpPost]
         public async Task<BLLResponse> CreateOrUpdate(DepartmentSaveRequest request)
