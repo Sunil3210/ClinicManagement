@@ -1,14 +1,7 @@
 ﻿using DAL.Entity;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace DAL
 {
     public interface IAdmissionDAL
@@ -22,6 +15,7 @@ namespace DAL
         public AdmissionDAL(IConfiguration configuration) : base(configuration){}
 
         #region CreateOrUpdate
+
         public async Task<int> CreateOrUpdate(Admission admission)
         {
             int newId = 0;

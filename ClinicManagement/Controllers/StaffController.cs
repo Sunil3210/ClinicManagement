@@ -5,7 +5,6 @@ using ClinicManagement.Request;
 using ClinicManagement.Response;
 using DAL.Entity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
