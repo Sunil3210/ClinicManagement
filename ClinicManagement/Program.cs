@@ -31,6 +31,7 @@ builder.Services.AddScoped<IStaffDAL, StaffDAL>();
 builder.Services.AddScoped<IProfileDAL, ProfileDAL>();
 builder.Services.AddScoped<ILookupDAL, LookupDAL>();
 builder.Services.AddScoped<IPatientDAL,PatientDAL>();
+builder.Services.AddScoped<IRoomDAL, RoomDAL>();
 
 //BLL
 builder.Services.AddScoped<IDepartmentBLL, DepartmentBLL>();
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IProfileBLL, ProfileBLL>();
 builder.Services.AddScoped<IUserClaimService, UserClaimService>();
 builder.Services.AddScoped<ILookupBLL,LookupBLL>();
 builder.Services.AddScoped<IPatientBLL, PatientBLL>();
+builder.Services.AddScoped<IRoomBLL, RoomBLL>();
 builder.Services.AddHttpContextAccessor();
 var key = Encoding.ASCII.GetBytes(builder.Configuration["JwtTokenFields:AccessTokenKey"]);
 builder.Services.AddAuthentication("Bearer")
