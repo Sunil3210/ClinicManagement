@@ -6,20 +6,21 @@ using ClinicManagement.Response;
 using DAL.Entity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClinicManagement.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorController : BaseController
+    public class PatientController : BaseController
     {
-        public readonly IDoctorBLL doctorBLL;
+        public readonly IPatientBLL patientBLL;
         public readonly IMapper mapper;
         public readonly IUserClaimService userClaimService;
 
-        public DoctorController(IDoctorBLL doctorBLL, IMapper mapper, IUserClaimService userClaimService)
+        public PatientController(IPatientBLL patientBLL, IMapper mapper, IUserClaimService userClaimService)
         {
-            this.doctorBLL = doctorBLL;
+            this.patientBLL = patientBLL;
             this.mapper = mapper;
             this.userClaimService = userClaimService;
         }
@@ -34,40 +35,41 @@ namespace ClinicManagement.Controllers
 
         [Route("CreateOrUpdate")]
         [HttpPost]
-        public async Task<BLLResponse> CreateOrUpdate(DoctorSaveRequest request)
+        public async Task<BLLResponse> CreateOrUpdate(PatientSaveRequest request)
         {
             BLLResponse bLLResponse = null;
 
-            var doctor = mapper.Map<DoctorSaveRequest, Doctor>(request);
-            doctor.CreatedBy =int.Parse(userClaimService.GetUserId());
+            var patient = mapper.Map<PatientSaveRequest, Patient>(request);
+            
+            patient.CreatedBy = int.Parse(userClaimService.GetUserId());//loggedInUser
             try
             {
-                var result = await doctorBLL.CreateOrUpdate(doctor);
+                var result = await patientBLL.CreateOrUpdate(patient);
                 if (request.Id == 0)
                 {
                     if (result == 0)
                     {
-                        bLLResponse = CreateSuccessResponse(result, HttpStatusCode.Created, "Doctor Created Successfully");
+                        bLLResponse = CreateSuccessResponse(result, HttpStatusCode.Created, "Patient Created Successfully");
                     }
                     else if (result == 1)
                     {
-                        bLLResponse = CreateFailResponse(null, HttpStatusCode.InternalServerError, "Doctor Already Exists");
+                        bLLResponse = CreateFailResponse(null, HttpStatusCode.InternalServerError, "Patient Already Exists.");
                     }
                 }
                 else if (request.Id > 0)
                 {
                     if (result == 0)
                     {
-                        bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK, "Doctor Updated Successfully");
+                        bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK, "Patient Updated Successfully");
                     }
                     else if (result == 1)
                     {
-                        bLLResponse = CreateFailResponse(null, HttpStatusCode.InternalServerError, "Doctor Already Exists");
+                        bLLResponse = CreateFailResponse(result, HttpStatusCode.InternalServerError, "Patient Already Exists");
                     }
                 }
                 else
                 {
-                    bLLResponse = CreateFailResponse(null, HttpStatusCode.InternalServerError, "An Error Occurred while Updaing Doctor");
+                    bLLResponse = CreateFailResponse(-1, HttpStatusCode.InternalServerError, "An Error Occurred while Updating Patient");
                 }
             }
             catch (Exception ex)
@@ -86,24 +88,23 @@ namespace ClinicManagement.Controllers
         /// Read Patient By Id
         /// </summary>
         /// <returns></returns>
-        
         [HttpGet]
         [Route("GetById")]
-        public async Task<BLLResponse> GetById(int doctorId)
+        public async Task<BLLResponse> GetById(int patientId)
         {
             BLLResponse bLLResponse = null;
 
             try
             {
-                var result = await doctorBLL.GetById(doctorId);
-                var doctor=mapper.Map<Doctor,DoctorResponse>(result);
-                if (doctor != null)
+                var result = await patientBLL.GetById(patientId);
+                var response = mapper.Map<Patient, PatientResponse>(result);
+                if (response != null)
                 {
-                    bLLResponse = CreateSuccessResponse(doctor, HttpStatusCode.OK);
+                    bLLResponse = CreateSuccessResponse(response, HttpStatusCode.OK);
                 }
                 else
                 {
-                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Doctor not exist");
+                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Patient not exist");
                 }
             }
             catch (Exception ex)
@@ -118,9 +119,11 @@ namespace ClinicManagement.Controllers
         #region GetList
 
         /// <summary>
-        /// Read Patients List With Pagination ,search and sorting
+        /// Read Patient List With Pagination ,search and sorting
         /// </summary>
         /// <returns></returns>
+
+        [Authorize]
         [HttpGet]
         [Route("GetList")]
         public async Task<BLLResponse> GetList([FromQuery] SortWithPageParametersRequest sortWithPageParameters = null)
@@ -130,14 +133,14 @@ namespace ClinicManagement.Controllers
             try
             {
                 var sortWithPageParm = mapper.Map<SortWithPageParametersRequest, SortWithPageParameters>(sortWithPageParameters);
-                var result = await doctorBLL.GetList(sortWithPageParm);
-                if (result.Doctors.Count > 0)
+                var result = await patientBLL.GetList(sortWithPageParm);
+                if (result.Patients.Count > 0)
                 {
                     bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
                 }
                 else
                 {
-                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Doctors not exist");
+                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Patients not exist");
                 }
             }
             catch (Exception ex)

@@ -10,25 +10,25 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    public interface IStaffDAL
+    public interface IPatientDAL
     {
-        Task<int> CreateOrUpdate(Staff staff);
-        Task<Staff> GetById(int id);
-        Task<StaffList> GetList(SortWithPageParameters sortWithPageParameters = null);
-        Task<Staff> Validate(string email, string password);
+        Task<int> CreateOrUpdate(Patient patient);
+        Task<Patient> GetById(int id);
+        Task<PatientList> GetList(SortWithPageParameters sortWithPageParameters = null);
     }
-    public class StaffDAL : BaseDAL, IStaffDAL
+
+    public class PatientDAL : BaseDAL, IPatientDAL
     {
-        public StaffDAL(IConfiguration configuration) : base(configuration) { }
+        public PatientDAL(IConfiguration configuration) : base(configuration) { }
 
         #region Create
 
         /// <summary>
-        /// Create Staff
+        /// Create Patient
         /// </summary>
         /// <param name="staff"></param>
         /// <returns></returns>
-        public async Task<int> CreateOrUpdate(Staff staff)
+        public async Task<int> CreateOrUpdate(Patient patient)
         {
             int newId = 0;
             int retVal = -1;
@@ -38,41 +38,55 @@ namespace DAL
                             ParameterName ="@Name",
                             SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
-                            Value = staff.Name,
+                            Value = patient.Name,
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
                             ParameterName ="@Email",
                             SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
-                            Value = staff.Email,
+                            Value = patient.Email,
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
-                            ParameterName ="@Password",
+                            ParameterName ="@Age",
                             SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
-                            Value = staff.Password,
+                            Value = patient.Age,
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
-                            ParameterName ="@Role",
+                            ParameterName ="@Gender",
                             SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
-                            Value = staff.Role,
+                            Value = patient.Gender,
                             Direction = ParameterDirection.Input,
-                        },new SqlParameter(){
+                        },
+                        new SqlParameter(){
                             ParameterName ="@Phone",
                             SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
-                            Value = staff.Phone,
+                            Value = patient.Phone,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
+                            ParameterName ="@Address",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = patient.Address,
+                            Direction = ParameterDirection.Input,
+                        },new SqlParameter(){
+                            ParameterName ="@Aadhar",
+                            SqlDbType = SqlDbType.NVarChar,
+                            IsNullable=true,
+                            Value = patient.Aadhar,
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
                             ParameterName ="@LoggedInUserId",
                             SqlDbType = SqlDbType.Int,
                             IsNullable=true,
-                            Value = staff.CreatedBy,
+                            Value = patient.CreatedBy,
                             Direction = ParameterDirection.Input,
                         }
                     };
@@ -94,17 +108,17 @@ namespace DAL
                 using (var command = connection.CreateCommand())
                 {
                     connection.Open();
-                    command.CommandText = "sp_Staff_CreateOrUpdate";
+                    command.CommandText = "sp_Patient_Save";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddRange(parms);
-                    if (staff.Id > 0)
+                    if (patient.Id > 0)
                     {
                         command.Parameters.Add(new SqlParameter()
                         {
                             ParameterName = "@Id",
                             SqlDbType = SqlDbType.Int,
                             IsNullable = true,
-                            Value = staff.Id,
+                            Value = patient.Id,
                             Direction = ParameterDirection.Input,
                         });
                     }
@@ -113,7 +127,7 @@ namespace DAL
                     command.Connection = connection;
                     await command.ExecuteNonQueryAsync();
                     retVal = (int)returnParameter.Value;
-                    if (retVal == 0 && staff.Id == 0)
+                    if (retVal == 0 && patient.Id == 0)
                     {
                         newId = (int)outPutParameter.Value;
                     }
@@ -129,20 +143,20 @@ namespace DAL
         #region GetById
 
         /// <summary>
-        /// Get Department By Id
+        /// Get Patient By Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Staff> GetById(int id)
+        public async Task<Patient> GetById(int id)
         {
-            Staff staff = null;
+            Patient patient = null;
 
             using (var connection = CreateConnection())
             {
                 using (var command = connection.CreateCommand())
                 {
                     connection.Open();
-                    command.CommandText = "sp_Staff_GetById";
+                    command.CommandText = "sp_Patient_GetById";
                     command.Parameters.Add(new SqlParameter()
                     {
                         ParameterName = "@Id",
@@ -156,27 +170,30 @@ namespace DAL
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
                     {
-                        staff = new Staff()
+                        patient = new Patient()
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             Name = dataReader["Name"].ToString(),
+                            Age = Convert.ToInt32(dataReader["Age"]),
+                            Gender =Convert.ToChar(dataReader["gender"]),
+                            Address = dataReader["address"].ToString(),
                             Email = dataReader["email"].ToString(),
-                            Role = dataReader["Role"].ToString(),
+                            Aadhar= dataReader["aadhar"].ToString(),
                             Phone = dataReader["Phone"].ToString()
                         };
                     }
                 }
             }
-            return staff;
+            return patient;
         }
 
         #endregion
 
         #region GetList
 
-        public async Task<StaffList> GetList(SortWithPageParameters sortWithPageParameters = null)
+        public async Task<PatientList> GetList(SortWithPageParameters sortWithPageParameters = null)
         {
-            StaffList staffList = new StaffList();
+            PatientList patientList = new PatientList();
             if (sortWithPageParameters == null)
             {
                 sortWithPageParameters = new SortWithPageParameters();
@@ -225,90 +242,35 @@ namespace DAL
                 using (var command = dbConnection.CreateCommand())
                 {
                     dbConnection.Open();
-                    command.CommandText = "sp_Staff_GetList";
+                    command.CommandText = "sp_Patient_GetList";
                     command.Parameters.AddRange(parms);
                     command.CommandType = CommandType.StoredProcedure;
                     command.Connection = dbConnection;
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
                     {
-                        Staff department = new Staff()
+                        Patient patient = new Patient()
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             Name = dataReader["Name"].ToString(),
-                            Email = dataReader["email"].ToString(),
-                            Role = dataReader["Role"].ToString(),
-                            Phone = dataReader["Phone"].ToString()
-
+                            Email = dataReader["Email"].ToString(),
+                            Age = Convert.ToInt32(dataReader["Age"]),
+                            Phone = dataReader["Phone"].ToString(),
+                            Gender = Convert.ToChar(dataReader["Gender"]),
                         };
-                        staffList.Staffs.Add(department);
+                        patientList.Patients.Add(patient);
                     }
                     if (dataReader.NextResult())
                     {
                         while (dataReader.Read())
                         {
-                            staffList.TotalCount = Convert.ToInt32(dataReader["TotalCount"]);
+                            patientList.TotalCount = Convert.ToInt32(dataReader["TotalCount"]);
                         }
                     }
                 }
             }
 
-            return staffList;
-        }
-
-        #endregion
-
-        #region GetById
-
-        /// <summary>
-        /// Get Department By Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<Staff> Validate(string email, string password)
-        {
-            Staff staff = null;
-
-            using (var connection = CreateConnection())
-            {
-                using (var command = connection.CreateCommand())
-                {
-                    connection.Open();
-                    command.CommandText = "sp_Staff_Validate";
-                    var parms = new SqlParameter[]
-                    {
-                        new SqlParameter(){
-                            ParameterName ="@Email",
-                            SqlDbType = SqlDbType.NVarChar,
-                            IsNullable=true,
-                            Value = email,
-                            Direction = ParameterDirection.Input,
-                        },
-                        new SqlParameter(){
-                            ParameterName ="@Password",
-                            SqlDbType = SqlDbType.NVarChar,
-                            IsNullable=true,
-                            Value = password,
-                            Direction = ParameterDirection.Input,
-                        }
-                    };
-                    command.Parameters.AddRange(parms);
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Connection = connection;
-                    var dataReader = await command.ExecuteReaderAsync();
-                    while (dataReader.Read())
-                    {
-                        staff = new Staff()
-                        {
-                            Id = Convert.ToInt32(dataReader["Id"]),
-                            Name = dataReader["Name"].ToString(),
-                            Email = dataReader["email"].ToString(),
-                            Role = dataReader["Role"].ToString()
-                        };
-                    }
-                }
-            }
-            return staff;
+            return patientList;
         }
 
         #endregion

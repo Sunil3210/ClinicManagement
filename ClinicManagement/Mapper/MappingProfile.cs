@@ -15,6 +15,8 @@ namespace ClinicManagement.Mapper
             CreateMap<StaffSaveRequest, Staff>();
             CreateMap<Staff, StaffResponse>();
             CreateMap<Doctor, DoctorResponse>();
+            CreateMap<PatientSaveRequest, Patient>();
+            CreateMap<Patient, PatientResponse>();
 
         }
     }
