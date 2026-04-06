@@ -3,10 +3,8 @@ using BLL;
 using ClinicManagement.Extension;
 using ClinicManagement.Request;
 using ClinicManagement.Response;
-using DAL;
 using DAL.Entity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

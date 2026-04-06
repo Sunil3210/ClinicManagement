@@ -1,4 +1,5 @@
 ﻿using DAL.Entity;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 
@@ -9,6 +10,7 @@ namespace DAL
         Task<List<SelectItem>> GetDepartments();
         Task<List<SelectItem>> GetDoctors();
         Task<List<SelectItem>> GetRoomType();
+        Task<List<SelectItem>> GetAvailableRoomsByType(int typeId);
     }
     public class LookupDAL:BaseDAL,ILookupDAL
     {
@@ -102,6 +104,50 @@ namespace DAL
                     command.CommandText = "sp_Lkp_RoomType";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Connection = dbConnection;
+                    var dataReader = await command.ExecuteReaderAsync();
+                    while (dataReader.Read())
+                    {
+                        SelectItem item = new SelectItem()
+                        {
+                            Id = Convert.ToInt32(dataReader["Id"]),
+                            Name = dataReader["Name"].ToString(),
+                        };
+                        selectItems.Add(item);
+                    }
+                }
+            }
+
+            return selectItems;
+        }
+        #endregion
+
+        #region GetAvailableRoomsByType
+
+        /// <summary>
+        /// Get Available Rooms By Type
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<SelectItem>> GetAvailableRoomsByType(int typeId)
+        {
+            List<SelectItem> selectItems = new List<SelectItem>();
+            var sqlParamater = new SqlParameter()
+            {
+                ParameterName = "@TypeId",
+                SqlDbType = SqlDbType.Int,
+                IsNullable = true,
+                Value = typeId,
+                Direction = ParameterDirection.Input,
+            };
+            using (var dbConnection = CreateConnection())
+            {
+                using (var command = dbConnection.CreateCommand())
+                {
+
+                    dbConnection.Open();
+                    command.CommandText = "sp_Lkp_GetAvailableRoomsByType";
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Connection = dbConnection;
+                    command.Parameters.Add(sqlParamater);
                     var dataReader = await command.ExecuteReaderAsync();
                     while (dataReader.Read())
                     {

@@ -1,10 +1,5 @@
-﻿using AutoMapper;
-using BLL;
-using ClinicManagement.Request;
+﻿using BLL;
 using ClinicManagement.Response;
-using DAL.Entity;
-using DAL;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -24,7 +19,7 @@ namespace ClinicManagement.Controllers
         #region GetDepartments
 
         /// <summary>
-        /// Read DepartmBy List With Pagination ,search and sorting
+        /// Read Departments
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -102,6 +97,39 @@ namespace ClinicManagement.Controllers
             try
             {
                 var result = await lookupBLL.GetRoomType();
+                if (result.Count > 0)
+                {
+                    bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
+                }
+                else
+                {
+                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Data not exist");
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return bLLResponse;
+        }
+
+        #endregion
+
+        #region GetAvailableRoomsByType
+
+        /// <summary>
+        /// Read RoomType List for drop downs
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetAvailableRoomsByType")]
+        public async Task<BLLResponse> GetAvailableRoomsByType(int typeId)
+        {
+            BLLResponse bLLResponse = null;
+
+            try
+            {
+                var result = await lookupBLL.GetAvailableRoomsByType(typeId);
                 if (result.Count > 0)
                 {
                     bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);

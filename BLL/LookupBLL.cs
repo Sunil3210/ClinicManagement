@@ -13,6 +13,7 @@ namespace BLL
         Task<List<SelectItem>> GetDepartments();
         Task<List<SelectItem>> GetDoctors();
         Task<List<SelectItem>> GetRoomType();
+        Task<List<SelectItem>> GetAvailableRoomsByType(int typeId);
     }
 
     public class LookupBLL: ILookupBLL
@@ -58,6 +59,19 @@ namespace BLL
         public async Task<List<SelectItem>> GetRoomType()
         {
             return await lookupDAL.GetRoomType();
+        }
+
+        #endregion
+
+        #region GetAvailableRoomsByType
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<SelectItem>> GetAvailableRoomsByType(int typeId)
+        {
+            return await lookupDAL.GetAvailableRoomsByType(typeId);
         }
 
         #endregion
