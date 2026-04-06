@@ -12,7 +12,7 @@ namespace BLL
     {
         Task<List<SelectItem>> GetDepartments();
         Task<List<SelectItem>> GetDoctors();
-
+        Task<List<SelectItem>> GetRoomType();
     }
 
     public class LookupBLL: ILookupBLL
@@ -45,6 +45,19 @@ namespace BLL
         public Task<List<SelectItem>> GetDoctors()
         {
             return lookupDAL.GetDoctors();
+        }
+
+        #endregion
+
+        #region GetRoomType
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<SelectItem>> GetRoomType()
+        {
+            return await lookupDAL.GetRoomType();
         }
 
         #endregion

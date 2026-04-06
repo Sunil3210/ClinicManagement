@@ -8,6 +8,7 @@ namespace DAL
     {
         Task<List<SelectItem>> GetDepartments();
         Task<List<SelectItem>> GetDoctors();
+        Task<List<SelectItem>> GetRoomType();
     }
     public class LookupDAL:BaseDAL,ILookupDAL
     {
@@ -64,6 +65,41 @@ namespace DAL
                 {
                     dbConnection.Open();
                     command.CommandText = "sp_Lkp_Doctors";
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Connection = dbConnection;
+                    var dataReader = await command.ExecuteReaderAsync();
+                    while (dataReader.Read())
+                    {
+                        SelectItem item = new SelectItem()
+                        {
+                            Id = Convert.ToInt32(dataReader["Id"]),
+                            Name = dataReader["Name"].ToString(),
+                        };
+                        selectItems.Add(item);
+                    }
+                }
+            }
+
+            return selectItems;
+        }
+        #endregion
+
+        #region GetRoomType
+
+        /// <summary>
+        /// Get Lookup Data for GetRoomType
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<SelectItem>> GetRoomType()
+        {
+            List<SelectItem> selectItems = new List<SelectItem>();
+
+            using (var dbConnection = CreateConnection())
+            {
+                using (var command = dbConnection.CreateCommand())
+                {
+                    dbConnection.Open();
+                    command.CommandText = "sp_Lkp_RoomType";
                     command.CommandType = CommandType.StoredProcedure;
                     command.Connection = dbConnection;
                     var dataReader = await command.ExecuteReaderAsync();

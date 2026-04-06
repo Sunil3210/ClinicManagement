@@ -86,5 +86,38 @@ namespace ClinicManagement.Controllers
         }
 
         #endregion
+
+        #region GetRoomType
+
+        /// <summary>
+        /// Read RoomType List for drop downs
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetRoomType")]
+        public async Task<BLLResponse> GetRoomType()
+        {
+            BLLResponse bLLResponse = null;
+
+            try
+            {
+                var result = await lookupBLL.GetRoomType();
+                if (result.Count > 0)
+                {
+                    bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
+                }
+                else
+                {
+                    bLLResponse = CreateFailResponse(null, HttpStatusCode.NotFound, "Data not exist");
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return bLLResponse;
+        }
+
+        #endregion
     }
 }

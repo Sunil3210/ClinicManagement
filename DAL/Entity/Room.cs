@@ -12,6 +12,7 @@ namespace DAL.Entity
 
         public string RoomNumber { get; set; }
 
+        public int TypeId { get; set; }
         public string RoomType { get; set; }
 
         public string Status { get; set; }

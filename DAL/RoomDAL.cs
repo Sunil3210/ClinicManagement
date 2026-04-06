@@ -1,12 +1,7 @@
 ﻿using DAL.Entity;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL
 {
@@ -43,10 +38,10 @@ namespace DAL
                         },
 
                         new SqlParameter(){
-                            ParameterName ="@RoomType",
+                            ParameterName ="@TypeId",
                             SqlDbType = SqlDbType.NVarChar,
                             IsNullable=true,
-                            Value = room.RoomType,
+                            Value = room.TypeId,
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
@@ -146,7 +141,7 @@ namespace DAL
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             RoomNumber = dataReader["RoomNumber"].ToString(),
-                            RoomType = Convert.ToString(dataReader["RoomType"]),
+                            TypeId = Convert.ToInt32(dataReader["TypeId"]),
                             Status = Convert.ToString(dataReader["Status"])
                         };
                     }
@@ -221,6 +216,7 @@ namespace DAL
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             RoomNumber = dataReader["RoomNumber"].ToString(),
+                            //TypeId = Convert.ToInt32(dataReader["TypeId"]),
                             RoomType = Convert.ToString(dataReader["RoomType"]),
                             Status = Convert.ToString(dataReader["Status"])
                         };

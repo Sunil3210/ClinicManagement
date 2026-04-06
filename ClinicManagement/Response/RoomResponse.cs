@@ -7,7 +7,7 @@ namespace ClinicManagement.Response
         public int Id { get; set; }
 
         public string RoomNumber { get; set; }
-
+        public int TypeId { get; set; }
         public string RoomType { get; set; }
 
         public string Status { get; set; }
@@ -22,4 +22,5 @@ namespace ClinicManagement.Response
         public List<RoomResponse> Rooms { get; set; }
         public int TotalCount { get; set; }
     }
+
 }
