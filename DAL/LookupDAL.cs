@@ -10,7 +10,7 @@ namespace DAL
         Task<List<SelectItem>> GetDepartments();
         Task<List<SelectItem>> GetDoctors();
         Task<List<SelectItem>> GetRoomType();
-        Task<List<SelectItem>> GetAvailableRoomsByType(int typeId);
+        Task<List<SelectItem>> GetAvailableRoomsByType(int? typeId);
     }
     public class LookupDAL:BaseDAL,ILookupDAL
     {
@@ -127,7 +127,7 @@ namespace DAL
         /// Get Available Rooms By Type
         /// </summary>
         /// <returns></returns>
-        public async Task<List<SelectItem>> GetAvailableRoomsByType(int typeId)
+        public async Task<List<SelectItem>> GetAvailableRoomsByType(int? typeId)
         {
             List<SelectItem> selectItems = new List<SelectItem>();
             var sqlParamater = new SqlParameter()

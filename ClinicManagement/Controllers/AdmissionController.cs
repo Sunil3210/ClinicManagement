@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using BLL;
+using ClinicManagement.Extension;
 using ClinicManagement.Request;
 using ClinicManagement.Response;
 using DAL.Entity;
@@ -15,11 +16,13 @@ namespace ClinicManagement.Controllers
     {
         public readonly IAdmissionBLL admissionBLL;
         public readonly IMapper mapper;
+        public readonly IUserClaimService userClaimService;
 
-        public AdmissionController(IAdmissionBLL admissionBLL, IMapper mapper)
+        public AdmissionController(IAdmissionBLL admissionBLL, IMapper mapper, IUserClaimService userClaimService)
         {
             this.admissionBLL = admissionBLL;
             this.mapper = mapper;
+            this.userClaimService = userClaimService;
         }
 
         #region CreateOrUpdate
@@ -37,7 +40,7 @@ namespace ClinicManagement.Controllers
             BLLResponse bLLResponse = null;
 
             var admission = mapper.Map<AdmissionSaveRequest, Admission>(request);
-
+            admission.CreatedBy = int.Parse(userClaimService.GetUserId());
             try
             {
                 var result = await admissionBLL.CreateOrUpdate(admission);
@@ -81,7 +84,7 @@ namespace ClinicManagement.Controllers
         #region GetById
 
         /// <summary>
-        /// Read DepartmBy Id
+        /// Read Admission By Id
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -93,9 +96,11 @@ namespace ClinicManagement.Controllers
             try
             {
                 var result = await admissionBLL.GetById(admissionId);
-                if (result != null)
+                var admission = mapper.Map<Admission, AdmissionResponse>(result);
+
+                if (admission != null)
                 {
-                    bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
+                    bLLResponse = CreateSuccessResponse(admission, HttpStatusCode.OK);
                 }
                 else
                 {
@@ -127,9 +132,11 @@ namespace ClinicManagement.Controllers
             {
                 var sortWithPageParm = mapper.Map<SortWithPageParametersRequest, SortWithPageParameters>(sortWithPageParameters);
                 var result = await admissionBLL.GetList(sortWithPageParm);
-                if (result.admissions.Count > 0)
+                var response = mapper.Map<AdmissionList,AdmissionListResponse>(result);
+
+                if (response.admissions.Count > 0)
                 {
-                    bLLResponse = CreateSuccessResponse(result, HttpStatusCode.OK);
+                    bLLResponse = CreateSuccessResponse(response, HttpStatusCode.OK);
                 }
                 else
                 {

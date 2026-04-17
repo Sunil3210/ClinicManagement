@@ -123,7 +123,7 @@ namespace ClinicManagement.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetAvailableRoomsByType")]
-        public async Task<BLLResponse> GetAvailableRoomsByType(int typeId)
+        public async Task<BLLResponse> GetAvailableRoomsByType(int? typeId)
         {
             BLLResponse bLLResponse = null;
 

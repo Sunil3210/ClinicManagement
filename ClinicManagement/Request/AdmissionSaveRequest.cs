@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public int PatientId { get; set; }
         public int RoomId { get; set; }
-        public DateTime? AdmissionDate { get; set; }
-        public DateTime? DischargeDate { get; set; }
+        public DateOnly? AdmissionDate { get; set; }
+        public DateOnly? DischargeDate { get; set; }
     }
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DAL.Entity;
 
-namespace DAL.Entity
+namespace ClinicManagement.Response
 {
-    public class Admission:BaseEntity
+    public class AdmissionResponse
     {
         public int Id { get; set; }
         public int PatientId { get; set; }
@@ -16,13 +12,14 @@ namespace DAL.Entity
         public string PatientName { get; set; }
         public string RoomNumber { get; set; }
     }
-    public class AdmissionList
+
+    public class AdmissionListResponse
     {
-        public List<Admission> admissions { get; set; }
+        public List<AdmissionResponse> admissions { get; set; }
         public int TotalCount { get; set; }
-        public AdmissionList()
+        public AdmissionListResponse()
         {
-            this.admissions = new List<Admission>();
+            this.admissions = new List<AdmissionResponse>();
         }
     }
 }

@@ -18,7 +18,6 @@ namespace DAL
 
         public async Task<int> CreateOrUpdate(Admission admission)
         {
-            int newId = 0;
             int retVal = -1;
             var parms = new SqlParameter[]
                     {
@@ -37,6 +36,13 @@ namespace DAL
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
+                            ParameterName ="@AdmissionDate",
+                            SqlDbType = SqlDbType.Date,
+                            IsNullable=true,
+                            Value = admission.AdmissionDate,
+                            Direction = ParameterDirection.Input,
+                        },
+                        new SqlParameter(){
                             ParameterName ="@DischargeDate",
                             SqlDbType = SqlDbType.Date,
                             IsNullable=true,
@@ -44,33 +50,13 @@ namespace DAL
                             Direction = ParameterDirection.Input,
                         },
                         new SqlParameter(){
-                            ParameterName ="@CreatedBy",
+                            ParameterName ="@LoggedInUserId",
                             SqlDbType = SqlDbType.Int,
                             IsNullable=true,
                             Value = admission.CreatedBy,
                             Direction = ParameterDirection.Input,
-                        },
-                        new SqlParameter(){
-                            ParameterName ="@ModifiedBy",
-                            SqlDbType = SqlDbType.Int,
-                            IsNullable=true,
-                            Value = admission.ModifiedBy,
-                            Direction = ParameterDirection.Input,
-                        },
-                        new SqlParameter(){
-                            ParameterName ="@Active",
-                            SqlDbType = SqlDbType.Bit,
-                            IsNullable=true,
-                            Value = admission.Active,
-                            Direction = ParameterDirection.Input,
                         }
                     };
-            var outPutParameter = new SqlParameter()
-            {
-                ParameterName = "@NewId",
-                SqlDbType = SqlDbType.Int,
-                Direction = ParameterDirection.Output,
-            };
             var returnParameter = new SqlParameter()
             {
                 ParameterName = "@ReturnVal",
@@ -97,15 +83,10 @@ namespace DAL
                             Direction = ParameterDirection.Input,
                         });
                     }
-                    command.Parameters.Add(outPutParameter);
                     command.Parameters.Add(returnParameter);
                     command.Connection = connection;
                     await command.ExecuteNonQueryAsync();
                     retVal = (int)returnParameter.Value;
-                    if (retVal == 0 && admission.Id == 0)
-                    {
-                        newId = (int)outPutParameter.Value;
-                    }
                 }
             }
 
@@ -141,14 +122,11 @@ namespace DAL
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             PatientId = Convert.ToInt32(dataReader["PatientId"]),
+                            //PatientName=Convert.ToString(dataReader["PatientName"]),
                             RoomId = Convert.ToInt32(dataReader["RoomId"]),
-                            AdmissionDate = Convert.ToDateTime(dataReader["AdmissionDate"]),
-                            DischargeDate = dataReader["DischargeDate"] == DBNull.Value ? null : Convert.ToDateTime(dataReader["DischargeDate"]),
-                            CreatedBy = Convert.ToInt32(dataReader["CreatedBy"]),
-                            CreatedDate = Convert.ToDateTime(dataReader["CreatedDate"]),
-                            ModifiedBy = dataReader["ModifiedBy"] == DBNull.Value ? null : Convert.ToInt32(dataReader["ModifiedBy"]),
-                            ModifiedDate = dataReader["ModifiedDate"] == DBNull.Value ? null : Convert.ToDateTime(dataReader["ModifiedDate"]),
-                            Active = Convert.ToBoolean(dataReader["Active"]),
+                            //RoomNumber = Convert.ToString(dataReader["RoomNumber"]),
+                            AdmissionDate = dataReader["AdmissionDate"] != DBNull.Value ? DateOnly.FromDateTime(Convert.ToDateTime(dataReader["AdmissionDate"])) : null,
+                            DischargeDate = dataReader["DischargeDate"] != DBNull.Value ? DateOnly.FromDateTime(Convert.ToDateTime(dataReader["DischargeDate"])) : null,
                         };
                     }
                 }
@@ -221,12 +199,11 @@ namespace DAL
                         {
                             Id = Convert.ToInt32(dataReader["Id"]),
                             PatientId = Convert.ToInt32(dataReader["PatientId"]),
-                            Name = dataReader["Name"].ToString(),
+                            PatientName = dataReader["PatientName"].ToString(),
                             RoomNumber = dataReader["RoomNumber"].ToString(),
-                            RoomType = dataReader["RoomType"].ToString(),
-                            Phone = dataReader["Phone"] == DBNull.Value ? null : dataReader["Phone"].ToString(),
-                            Gender = Convert.ToChar(dataReader["Gender"]),
-                            Age = Convert.ToInt32(dataReader["Age"])
+                            RoomId = Convert.ToInt32(dataReader["RoomId"]),
+                            AdmissionDate = dataReader["AdmissionDate"] != DBNull.Value ? DateOnly.FromDateTime(Convert.ToDateTime(dataReader["AdmissionDate"])) : null,
+                            DischargeDate = dataReader["DischargeDate"] != DBNull.Value ? DateOnly.FromDateTime(Convert.ToDateTime(dataReader["DischargeDate"])) : null,
                         };
                         admissionList.admissions.Add(admission);
                     }
